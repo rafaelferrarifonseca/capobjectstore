@@ -21,14 +21,16 @@
     },
     "devDependencies": {
         "@sap/hdi-deploy": "^4.2.3",
+        "@sap/ux-specification": "^1.96.0",
         "sqlite3": "^5.0.2"
     },
     "engines": {
-        "node": "14.18.1",
+        "node": "14.17.6",
         "npm": "6.14.15"
     },
     "scripts": {
-        "start": "cds run"
+        "start": "cds run",
+        "undeploy": "cf undeploy capobjectstore --delete-services --delete-service-keys"
     },
     "eslintConfig": {
         "extends": "eslint:recommended",
@@ -82,5 +84,8 @@
         "hana": {
             "deploy-format": "hdbtable"
         }
-    }
+    },
+    "sapux": [
+        "app/plant"
+    ]
 }
