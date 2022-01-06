@@ -95,7 +95,7 @@ annotate MaterialPlant with @(
         description : 'ID',
         Core.Computed,
         Common.Text : {
-            $value                 : plantDescription,
+            $value                 : plantCode,
             ![@UI.TextArrangement] : #TextLast
         }
     );
@@ -104,7 +104,6 @@ annotate MaterialPlant with @(
         description : '{i18n>plantCode}',
         Common      : {
             FieldControl             : #Mandatory,
-            TextFor                  : ID,
             ValueListWithFixedValues : false,
             ValueList                : {
                 CollectionPath : 'Plant',
@@ -127,6 +126,7 @@ annotate MaterialPlant with @(
         title       : '{i18n>plantDescription}',
         description : '{i18n>plantDescription}',
         Common      : {
+            TextFor                  : plantCode,
             FieldControl             : #Mandatory
         }
     );
