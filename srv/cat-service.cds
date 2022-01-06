@@ -1,6 +1,6 @@
 using capobjectstore.stock as capobjectstore from '../db/data-model';
 
-service CatalogService @( requires:'authenticated-user') {
+service CatalogService { // @( requires:'authenticated-user') {
     // Serviços para criação de APP FIORI DE CADASTROS
     entity UnitMeasure   as projection on capobjectstore.UnitMeasure;
     @odata.draft.enabled : true

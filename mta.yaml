@@ -13,7 +13,7 @@ build-parameters:
   before-all:
    - builder: custom
      commands:
-      - npm ci
+      - npm install --production
       - npx -p @sap/cds-dk cds build --production
 
 modules:
@@ -25,9 +25,7 @@ modules:
    parameters:
      buildpack: nodejs_buildpack
      memory: 512M
-     disk-quota: 512M
-   build-parameters:
-     builder: npm-ci
+     disk-quota: 1024M
    properties: 
      SAP_JWT_TRUST_ACL: "[{\"clientid\":\"*\",\"identityzone\":\"*\"}]"
    requires:
@@ -35,10 +33,9 @@ modules:
     - name: capobjectstore-db
     - name: capobjectstore-xsuaa-service
     - name: capobjectstore-destination-service 
-    - name: capobjectstore-objectstore-service
-  
       parameters:
-        content-target: true   
+        content-target: true  
+    - name: capobjectstore-objectstore-service
    provides:
     - name: srv-api      # required by consumers of CAP services (e.g. approuter)
       properties:
