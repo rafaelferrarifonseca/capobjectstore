@@ -23,7 +23,7 @@ entity UnitMeasure {
 annotate UnitMeasure with @(
   title              : '{i18n>UnitMeasure}',
   description        : '{i18n>UnitMeasure}',
-  UI.TextArrangement : #TextLast,
+  UI.TextArrangement : #TextOnly,
   cds.odata.valuelist,
   Common.SemanticKey : [unit],
   UI.Identification  : [{
@@ -72,16 +72,17 @@ annotate UnitMeasure with @(
 //------------------------------------------------------//
 //------------------------------------------------------//
 //Entity
+@cds.odata.valuelist
 entity MaterialPlant : cuid, managed {
   plantCode        : String(4) not null;
-  plantDescription : String not null;
+  plantDescription : localized String not null;
 }
 
 //Annotation
 annotate MaterialPlant with @(
     title              : '{i18n>MaterialPlant}',
-    description        : '{i18n>MaterialPlant}',
-    UI.TextArrangement : #TextLast,
+    description        : plantCode,
+    UI.TextArrangement : #TextOnly,
     cds.odata.valuelist,
     Common.SemanticKey : [plantCode],
     UI.Identification  : [{
@@ -91,12 +92,10 @@ annotate MaterialPlant with @(
     }]
 ) {
     ID             @(
-        title       : 'ID',
-        description : 'ID',
         Core.Computed,
         Common.Text : {
             $value                 : plantCode,
-            ![@UI.TextArrangement] : #TextLast
+            ![@UI.TextArrangement] : #TextOnly
         }
     );
     plantCode           @(
@@ -104,6 +103,7 @@ annotate MaterialPlant with @(
         description : '{i18n>plantCode}',
         Common      : {
             FieldControl             : #Mandatory,
+            TextFor : ID,
             ValueListWithFixedValues : false,
             ValueList                : {
                 CollectionPath : 'Plant',
@@ -126,7 +126,6 @@ annotate MaterialPlant with @(
         title       : '{i18n>plantDescription}',
         description : '{i18n>plantDescription}',
         Common      : {
-            TextFor                  : plantCode,
             FieldControl             : #Mandatory
         }
     );

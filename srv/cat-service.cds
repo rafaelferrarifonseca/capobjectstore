@@ -14,10 +14,14 @@ service CatalogService { // @( requires:'authenticated-user') {
         * , stock: redirected to MaterialStock    
     };
     @readonly 
-    entity MaterialStock as projection on capobjectstore.MaterialStock;
+    entity MaterialStock as projection on capobjectstore.MaterialStock {
+        *, plant : redirected to MaterialPlant
+    };
 
     //Serviços para manipulação de dados
-
-    @odata.draft.enabled : true
-    entity MaterialStockCRUD as projection on capobjectstore.MaterialStock;
+    entity MaterialPlantCRUD as projection on capobjectstore.MaterialPlant;
+    entity MaterialStockCRUD  as projection on capobjectstore.MaterialStock {
+        *, plant: redirected to MaterialPlantCRUD
+    }
+  
 }

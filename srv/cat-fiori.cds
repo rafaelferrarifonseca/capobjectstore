@@ -29,16 +29,17 @@ annotate CatalogService.MaterialPlant with @(
 	},
 //Object Page
 	UI: {
-        HeaderInfo: {
-            Description: { 
-                Value: plantDescription 
-            },           
+        HeaderInfo: {          
             Title : { 
                 $Type : 'UI.DataField',
                 Value: plantCode
             },
             TypeName: '{i18n>plant_singular}',
             TypeNamePlural: '{i18n>plant_plural}', 
+            Description: { 
+                $Type: 'UI.DataField', 
+                Value: plantDescription 
+            }, 
 
         },
 		 HeaderFacets            : [
@@ -48,17 +49,12 @@ annotate CatalogService.MaterialPlant with @(
                 ![@UI.Importance] : #Medium
             }
         ],
-        FieldGroup #GeneralData: {
+        FieldGroup #Description: {
 			Data: [
-                {
-                    $Type : 'UI.DataField',
-                    Value: plantCode
-                },
 				{
                     $Type : 'UI.DataField',
                     Value: plantDescription
-                },
-
+                }
 			]                        
         },
         FieldGroup #Admin: {

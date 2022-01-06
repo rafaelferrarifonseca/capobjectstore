@@ -1,0 +1,12 @@
+@server = http://localhost:4004
+@me = Authorization: Basic {{$processEnv USER}}:
+
+### ------------------------------------------------------------------------
+# Create Plant
+POST {{server}}/catalog/MaterialPlantCRUD 
+Content-Type: application/json
+
+{
+    "plantCode": "1000",
+    "plantDescription": "Matriz"
+}
