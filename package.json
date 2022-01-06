@@ -1,18 +1,32 @@
 {
     "name": "capobjectstore",
     "version": "1.0.0",
-    "description": "A simple CAP project.",
-    "repository": "<Add your repository here>",
+    "description": "CAP project with objectstore",
+    "repository": "",
     "license": "UNLICENSED",
     "private": true,
     "dependencies": {
         "@sap/cds": "^5",
+        "@sap/cds-odata-v2-adapter-proxy": "^1.8.4",
+        "@sap/hana-client": "^2.11.14",
+        "@sap/textbundle": "^4.0.0",
+        "@sap/xsenv": "^3.1.1",
+        "@sap/xssec": "^3.2.11",
+        "aws-sdk": "^2.1051.0",
+        "cds-swagger-ui-express": "^0.3.0",
+        "convert-excel-to-json": "^1.7.0",
         "express": "^4",
-        "hdb": "^0.18.3"
+        "hdb": "^0.18.3",
+        "passport": "^0.5.2"
     },
     "devDependencies": {
+        "@sap/hdi-deploy": "^4.2.3",
         "sqlite3": "^5.0.2"
     },
+    "engines": {
+        "node": "14.18.1",
+        "npm": "6.14.15"
+      },
     "scripts": {
         "start": "cds run"
     },
@@ -42,9 +56,27 @@
         }
     },
     "cds": {
+        "i18n": {
+            "folders": [
+                "_i18n",
+                "i18n"
+            ]
+        },
         "requires": {
             "db": {
-                "kind": "sql"
+                "model": [
+                    "db",
+                    "srv"
+                ],
+                "kind": "hana",
+                "pool": {
+                    "acquireTimeoutMillis": 600000,
+                    "min": 0,
+                    "max": 600000
+                }
+            },
+            "uaa": {
+                "kind": "xsuaa"
             }
         },
         "hana": {

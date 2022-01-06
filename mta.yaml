@@ -24,11 +24,21 @@ modules:
    path: gen/srv
    parameters:
      buildpack: nodejs_buildpack
+     memory: 512M
+     disk-quota: 512M
    build-parameters:
      builder: npm-ci
+   properties: 
+     SAP_JWT_TRUST_ACL: "[{\"clientid\":\"*\",\"identityzone\":\"*\"}]"
    requires:
     # Resources extracted from CAP configuration
     - name: capobjectstore-db
+    - name: capobjectstore-xsuaa-service
+    - name: capobjectstore-destination-service 
+    - name: capobjectstore-objectstore-service
+  
+      parameters:
+        content-target: true   
    provides:
     - name: srv-api      # required by consumers of CAP services (e.g. approuter)
       properties:
@@ -59,4 +69,48 @@ resources:
    properties:
      hdi-service-name: ${service-name}
 
+# --------------------- XSUAA Service ---------------------
+ - name: capobjectstore-xsuaa-service
+# ---------------------------------------------------------
+   type: org.cloudfoundry.managed-service
+   parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service-name: capobjectstore-xsuaa-service
+      service: xsuaa
 
+
+
+# ----------------- Destination Service -------------------
+ - name: capobjectstore-destination-service
+# ---------------------------------------------------------
+   type: org.cloudfoundry.managed-service
+   requires:
+     - name: srv-api
+   parameters:
+     service: destination
+     service-name: capobjectstore-destination-service
+     service-plan: lite
+     config:
+       init_data:
+         subaccount:
+           existing_destinations_policy: update
+           destinations:
+             - Name: capobjectstore
+               Description: CAP Objectstore Destination Service
+               Authentication: NoAuthentication
+               ProxyType: Internet
+               Type: HTTP
+               URL: ~{srv-api/srv-url}
+               HTML5.DynamicDestination: true
+               HTML5.ForwardAuthToken: true
+               HTML5.Timeout: 300000
+
+ # ------------------ S3 Objectore Service -------------------
+ - name: capobjectstore-objectstore-service
+ # -----------------------------------------------------------
+   type: org.cloudfoundry.managed-service
+   parameters:
+      service: objectstore
+      service-plan: s3-standard
+      service-name: nfse-objectstore-service
