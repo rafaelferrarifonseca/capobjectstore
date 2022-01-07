@@ -1,7 +1,7 @@
 {
     "_version": "1.32.0",
     "sap.app": {
-        "id": "capobjectstore.plant",
+        "id": "capobjectstore.type",
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
@@ -26,16 +26,16 @@
         },
         "crossNavigation": {
             "inbounds": {
-                "capobjectstore-plant-inbound": {
+                "capobjectstore-type-inbound": {
                     "signature": {
                         "parameters": {},
                         "additionalParameters": "allowed"
                     },
-                    "semanticObject": "MaterialPlant",
-                    "action": "Manage",
+                    "semanticObject": "materialtype",
+                    "action": "manage",
                     "title": "{{flpTitle}}",
                     "subTitle": "{{flpSubtitle}}",
-                    "icon": "sap-icon://BusinessSuiteInAppSymbols/icon-warehouse"
+                    "icon": "sap-icon://BusinessSuiteInAppSymbols/icon-subclass"
                 }
             }
         }
@@ -96,42 +96,42 @@
             "routes": [
                 {
                     "pattern": ":?query:",
-                    "name": "MaterialPlantList",
-                    "target": "MaterialPlantList"
+                    "name": "MaterialTypeList",
+                    "target": "MaterialTypeList"
                 },
                 {
-                    "pattern": "MaterialPlant({key}):?query:",
-                    "name": "MaterialPlantObjectPage",
-                    "target": "MaterialPlantObjectPage"
+                    "pattern": "MaterialType({key}):?query:",
+                    "name": "MaterialTypeObjectPage",
+                    "target": "MaterialTypeObjectPage"
                 }
             ],
             "targets": {
-                "MaterialPlantList": {
+                "MaterialTypeList": {
                     "type": "Component",
-                    "id": "MaterialPlantList",
+                    "id": "MaterialTypeList",
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
-                            "entitySet": "MaterialPlant",
+                            "entitySet": "MaterialType",
                             "variantManagement": "Page",
                             "navigation": {
-                                "MaterialPlant": {
+                                "MaterialType": {
                                     "detail": {
-                                        "route": "MaterialPlantObjectPage"
+                                        "route": "MaterialTypeObjectPage"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "MaterialPlantObjectPage": {
+                "MaterialTypeObjectPage": {
                     "type": "Component",
-                    "id": "MaterialPlantObjectPage",
+                    "id": "MaterialTypeObjectPage",
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
                             "editableHeaderContent": false,
-                            "entitySet": "MaterialPlant"
+                            "entitySet": "MaterialType"
                         }
                     }
                 }

@@ -38,23 +38,7 @@ annotate UnitMeasure with @(
       Text : {
         $value                 : unitDescription,
         ![@UI.TextArrangement] : #TextLast
-      },
-     ValueListWithFixedValues : false,
-            ValueList                : {
-                CollectionPath : 'Unit',
-                Parameters     : [
-                {
-                    $Type             : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : 'unit',
-                    ValueListProperty : 'unit'
-                },
-                {
-                    $Type             : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : 'unitDescription',
-                    ValueListProperty : 'unitDescription'
-                }
-                ]
-            }
+      }
     }
   );
   unitDescription @(
@@ -82,7 +66,7 @@ entity MaterialPlant : cuid, managed {
 annotate MaterialPlant with @(
     title              : '{i18n>MaterialPlant}',
     description        : plantCode,
-    UI.TextArrangement : #TextOnly,
+    UI.TextArrangement : #TextLast,
     cds.odata.valuelist,
     Common.SemanticKey : [plantCode],
     UI.Identification  : [{
@@ -95,7 +79,7 @@ annotate MaterialPlant with @(
         Core.Computed,
         Common.Text : {
             $value                 : plantCode,
-            ![@UI.TextArrangement] : #TextOnly
+            ![@UI.TextArrangement] : #TextFirst
         }
     );
     plantCode           @(
@@ -103,23 +87,7 @@ annotate MaterialPlant with @(
         description : '{i18n>plantCode}',
         Common      : {
             FieldControl             : #Mandatory,
-            TextFor : ID,
-            ValueListWithFixedValues : false,
-            ValueList                : {
-                CollectionPath : 'Plant',
-                Parameters     : [
-                {
-                    $Type             : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : 'plantCode',
-                    ValueListProperty : 'plantCode'
-                },
-                {
-                    $Type             : 'Common.ValueListParameterDisplayOnly',
-                    ValueListProperty : 'plantDescription'
-
-                }
-              ]
-            }
+            TextFor : ID
         }
     );
     plantDescription    @(
@@ -145,7 +113,7 @@ entity MaterialType : cuid, managed {
 annotate MaterialType with @(
     title              : '{i18n>MaterialType}',
     description        : '{i18n>MaterialType}',
-    UI.TextArrangement : #TextLast,
+    UI.TextArrangement : #TextOnly,
     cds.odata.valuelist,
     Common.SemanticKey : [matType],
     UI.Identification  : [{
@@ -155,12 +123,10 @@ annotate MaterialType with @(
     }]
 ) {
     ID             @(
-        title       : 'ID',
-        description : 'ID',
         Core.Computed,
         Common.Text : {
-            $value                 : matTypeDescription,
-            ![@UI.TextArrangement] : #TextLast
+            $value                 : matType,
+            ![@UI.TextArrangement] : #TextFirst
         }
     );
     matType           @(
@@ -168,23 +134,7 @@ annotate MaterialType with @(
         description : '{i18n>matType}',
         Common      : {
             FieldControl             : #Mandatory,
-            TextFor                  : ID,
-            ValueListWithFixedValues : false,
-            ValueList                : {
-                CollectionPath : 'MatType',
-                Parameters     : [
-                {
-                    $Type             : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : 'matType',
-                    ValueListProperty : 'matType'
-                },
-                {
-                    $Type             : 'Common.ValueListParameterDisplayOnly',
-                    ValueListProperty : 'matTypeDescription'
-
-                }
-              ]
-            }
+            TextFor                  : ID
         }
     );
     matTypeDescription    @(
@@ -228,8 +178,8 @@ annotate Material with @(
         description : 'ID',
         Core.Computed,
         Common.Text : {
-            $value                 : materialDescription,
-            ![@UI.TextArrangement] : #TextOnly
+            $value                 : materialCode,
+            ![@UI.TextArrangement] : #TextFirst
         }
     );
     materialCode           @(
@@ -237,28 +187,7 @@ annotate Material with @(
         description : '{i18n>materialCode}',
         Common      : {
             FieldControl             : #Mandatory,
-            TextFor                  : ID,
-            ValueListWithFixedValues : false,
-            ValueList                : {
-                CollectionPath : 'Material',
-                Parameters     : [
-                {
-                    $Type             : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : 'materialCode',
-                    ValueListProperty : 'materialCode'
-                },
-                {
-                    $Type             : 'Common.ValueListParameterDisplayOnly',
-                    ValueListProperty : 'materialDescription'
-
-                },
-                {
-                    $Type             : 'Common.ValueListParameterDisplayOnly',
-                    ValueListProperty : 'inactive'
-                }
-
-                ]
-            }
+            TextFor                  : ID
         }
     );
     materialDescription    @(
@@ -273,11 +202,11 @@ annotate Material with @(
         description : '{i18n>materialType}',
         Common      : {
             Text      : {
-                $value                 : materialType.matTypeDescription,
-                ![@UI.TextArrangement] : #TextLast
+                $value                 : materialType.matType,
+                ![@UI.TextArrangement] : #TextOnly
             },
             ValueList : {
-                CollectionPath  : 'MatType',
+                CollectionPath  : 'MaterialType',
                 SearchSupported : true,
                 Parameters      : [
                 {
@@ -289,7 +218,7 @@ annotate Material with @(
                 {
                     $Type             : 'Common.ValueListParameterDisplayOnly',
                     ValueListProperty : 'matType'
-                },
+                },                
                 {
                     $Type             : 'Common.ValueListParameterDisplayOnly',
                     ValueListProperty : 'matTypeDescription'
@@ -332,6 +261,7 @@ annotate MaterialStock with {
         title                           : '{i18n>material}',
         Common.ValueList                : {
             CollectionPath : 'Material',
+            SearchSupported: true,
             Parameters     : [
             {
                 $Type             : 'Common.ValueListParameterInOut',
@@ -353,7 +283,8 @@ annotate MaterialStock with {
         title                           : '{i18n>plant}',
         Common.ValueListWithFixedValues : false,
         Common.ValueList                : {
-            CollectionPath : 'Plant',
+            CollectionPath : 'MaterialPlant',
+            SearchSupported: true,
             Parameters     : [
             {
                 $Type             : 'Common.ValueListParameterInOut',

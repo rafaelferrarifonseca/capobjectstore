@@ -2,13 +2,33 @@ _schema-version: "3.1"
 ID: capobjectstore
 description: A simple CAP project.
 version: 1.0.0
+parameters:
+  ###deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production
+
+
+# ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# ----------------------------MODULES-----------------------------
+# ----------------------------------------------------------------
+# ----------------------------------------------------------------
 modules:
+
+# --------------------- CAP SERVER MODULE ------------------------
 - name: capobjectstore-srv
+# ----------------------------------------------------------------
   type: nodejs
   path: gen/srv
   properties:
     SAP_JWT_TRUST_ACL: '[{"clientid":"*","identityzone":"*"}]'
   requires:
+  # Resources extracted from CAP configuration
   - name: capobjectstore-db
   - name: capobjectstore-xsuaa-service
   - name: capobjectstore-destination-service
@@ -16,25 +36,64 @@ modules:
       content-target: true
   - name: capobjectstore-objectstore-service
   provides:
-  - name: srv-api
+  - name: srv-api # required by consumers of CAP services (e.g. approuter)
     properties:
       srv-url: ${default-url}
   parameters:
     buildpack: nodejs_buildpack
     disk-quota: 1024M
     memory: 512M
+
+# -------------- SIDECAR MODULE - DB DEPLOYER----------------- 
 - name: capobjectstore-db-deployer
+# ------------------------------------------------------------
   type: hdb
   path: gen/db
   requires:
   - name: capobjectstore-db
   parameters:
     buildpack: nodejs_buildpack
-- name: capobjectstore-app-content
+
+# -------------------- HTML5 Content ----------------------
+- name: capobjectstore-destination-content
+# ---------------------------------------------------------
+  type: com.sap.application.content
+  requires:
+  - name: capobjectstore-xsuaa-service
+    parameters:
+      service-key:
+        name: capobjectstore_xsuaa-key
+  - name: capobjectstore-html5-host
+    parameters:
+      service-key:
+        name: capobjectstore_html5_host-key
+  - name: capobjectstore-destination-service
+    parameters:
+      content-target: true        
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        - Name: capobjectstore_html5_host
+          ServiceInstanceName: capobjectstore-html5-host-service
+          ServiceKeyName: capobjectstore_html5_host-key
+          sap.cloud.service: capobjectstore
+        - Authentication: OAuth2UserTokenExchange
+          Name: capobjectstore_xsuaa
+          ServiceInstanceName: capobjectstore-xsuaa-service
+          ServiceKeyName: capobjectstore_xsuaa-key
+          sap.cloud.service: capobjectstore
+        existing_destinations_policy: update    
+  build-parameters:
+    no-source: true
+
+# -------------- UI DEPLOYER MODULE - APP CONTENT ------------
+- name: capobjectstore-ui-deployer
+# ------------------------------------------------------------
   type: com.sap.application.content
   path: .
   requires:
-  - name: capobjectstore-repo-host
+  - name: capobjectstore-html5-host
     parameters:
       content-target: true
   build-parameters:
@@ -44,44 +103,97 @@ modules:
       - capobjectstoreplant.zip
       name: capobjectstoreplant
       target-path: resources/
+    - artifacts:
+      - capobjectstoretype.zip
+      name: capobjectstoretype
+      target-path: resources/
+    - artifacts:
+      - capobjectstorematerial.zip
+      name: capobjectstorematerial
+      target-path: resources/
+
+# --------------------- HTML5 MODULE --------------------------
 - name: capobjectstoreplant
+# ------------------------------------------------------------
   type: html5
   path: app/plant
   build-parameters:
     build-result: dist
     builder: custom
     commands:
-    - npm install
     - npm run build:cf
     supported-platforms: []
+
+# --------------------- HTML5 MODULE -------------------------
+- name: capobjectstoretype
+# ------------------------------------------------------------
+  type: html5
+  path: app/type
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm run build:cf
+    supported-platforms: []
+# --------------------- HTML5 MODULE -------------------------
+- name: capobjectstorematerial
+# ------------------------------------------------------------
+  type: html5
+  path: app/material
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm run build:cf
+    supported-platforms: []
+
+
+# ----------------------------------------------------------------
+# ----------------------------------------------------------------
+# ---------------------------RESOURCES----------------------------
+# ----------------------------------------------------------------
+# ----------------------------------------------------------------
 resources:
+
+# --------------------- DB - HDI CONTAINER------------------------
 - name: capobjectstore-db
+# ----------------------------------------------------------------
   type: com.sap.xs.hdi-container
   parameters:
     service: hana
     service-plan: hdi-shared
   properties:
     hdi-service-name: ${service-name}
+
+# ------------------------ XSUAA Service -------------------------  
 - name: capobjectstore-xsuaa-service
+# ----------------------------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     path: ./xs-security.json
     service: xsuaa
     service-name: capobjectstore-xsuaa-service
     service-plan: application
+
+# ----------------- Destination Service -------------------   
 - name: capobjectstore-destination-service
+# ---------------------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     config:
-      HTML5Runtime_enabled: true
+      ##HTML5Runtime_enabled: true
       init_data:
-        instance:
+        subaccount:
           destinations:
           - Authentication: NoAuthentication
-            Name: ui5
+            Description: CAP Objectstore Destination Service
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            HTML5.Timeout: 300000
+            Name: capobjectstore
             ProxyType: Internet
             Type: HTTP
-            URL: https://ui5.sap.com
+            URL: ~{srv-api/srv-url}  
           existing_destinations_policy: update
       version: 1.0.0
     service: destination
@@ -89,24 +201,22 @@ resources:
     service-plan: lite
   requires:
   - name: srv-api
+
+ # -------------- AWS S3 Objectore Service ------------------
 - name: capobjectstore-objectstore-service
+# -----------------------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     service: objectstore
     service-name: nfse-objectstore-service
     service-plan: s3-standard
-- name: capobjectstore-repo-host
+
+# ---------------------- HTML5 Host -------------------------
+- name: capobjectstore-html5-host
+# -----------------------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
-    service-name: capobjectstore-html5-srv
+    service-name: capobjectstore-html5-host-service
     service-plan: app-host
-parameters:
-  deploy_mode: html5-repo
-  enable-parallel-deployments: true
-build-parameters:
-  before-all:
-  - builder: custom
-    commands:
-    - npm install --production
-    - npx -p @sap/cds-dk cds build --production
+

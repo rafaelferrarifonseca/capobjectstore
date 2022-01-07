@@ -32,7 +32,7 @@ annotate CatalogService.MaterialPlant with @(
         HeaderInfo: {          
             Title : { 
                 $Type : 'UI.DataField',
-                Value: plantCode
+                Value: ID
             },
             TypeName: '{i18n>plant_singular}',
             TypeNamePlural: '{i18n>plant_plural}', 
@@ -40,17 +40,20 @@ annotate CatalogService.MaterialPlant with @(
                 $Type: 'UI.DataField', 
                 Value: plantDescription 
             }, 
-
         },
-		 HeaderFacets            : [
+		HeaderFacets            : [
             {
                 $Type             : 'UI.ReferenceFacet',
                 Target            : '@UI.FieldGroup#Admin',
                 ![@UI.Importance] : #Medium
             }
         ],
-        FieldGroup #Description: {
+        FieldGroup #GeneralData: {
 			Data: [
+                {
+                    $Type : 'UI.DataField',
+                    Value: plantCode
+                },
 				{
                     $Type : 'UI.DataField',
                     Value: plantDescription
@@ -76,7 +79,15 @@ annotate CatalogService.MaterialPlant with @(
                     Value : modifiedAt
                 }
             ]
-        }     
+        },
+        // Page Facets
+		Facets: [
+            {    
+                $Type: 'UI.ReferenceFacet', 
+                Label: '{i18n>GeneralData}', 
+                Target: '@UI.FieldGroup#GeneralData'
+            }
+        ]    
     }
 );
 
@@ -110,17 +121,16 @@ annotate CatalogService.MaterialType with @(
 	},
 //Object Page
 	UI: {
-        HeaderInfo: {
-            Description: { 
-                Value: matTypeDescription 
-            },           
+        HeaderInfo: {          
             Title : { 
                 $Type : 'UI.DataField',
-                Value: matType
+                Value: ID
             },
             TypeName: '{i18n>matType_singular}',
             TypeNamePlural: '{i18n>matType_plural}', 
-
+            Description: { 
+                Value: matTypeDescription 
+            }, 
         },
 		 HeaderFacets            : [
             {
@@ -161,7 +171,15 @@ annotate CatalogService.MaterialType with @(
                     Value : modifiedAt
                 }
             ]
-        }     
+        },
+        // Page Facets
+		Facets: [
+            {    
+                $Type: 'UI.ReferenceFacet', 
+                Label: '{i18n>GeneralData}', 
+                Target: '@UI.FieldGroup#GeneralData'
+            }
+        ]      
     }
 );
 
@@ -206,17 +224,16 @@ annotate CatalogService.Material with @(
 	},
 //Object Page
 	UI: {
-        HeaderInfo: {
-            Description: { 
-                Value: materialDescription 
-            },           
+        HeaderInfo: {          
             Title : { 
                 $Type : 'UI.DataField',
-                Value: materialCode
+                Value: ID
             },
             TypeName: '{i18n>material_singular}',
             TypeNamePlural: '{i18n>material_plural}', 
-
+            Description: { 
+                Value: materialDescription 
+            }
         },
 		 HeaderFacets            : [
             {
@@ -271,6 +288,17 @@ annotate CatalogService.Material with @(
             ]
         },
         Facets: [
+         // Page Facets
+            {    
+                $Type: 'UI.ReferenceFacet', 
+                Label: '{i18n>GeneralData}', 
+                Target: '@UI.FieldGroup#GeneralData'
+            },
+            {    
+                $Type: 'UI.ReferenceFacet', 
+                Label: '{i18n>Details}', 
+                Target: '@UI.FieldGroup#Details'
+            },              
             {   
                 $Type: 'UI.ReferenceFacet', 
                 Label: '{i18n>stock}',  

@@ -26,12 +26,14 @@
         "sqlite3": "^5.0.2"
     },
     "engines": {
-        "node": "14.17.6",
+        "node": "14.18.1",
         "npm": "6.14.15"
     },
     "scripts": {
         "start": "cds run",
-        "undeploy": "cf undeploy capobjectstore --delete-services --delete-service-keys"
+        "undeploy": "cf undeploy capobjectstore --delete-services --delete-service-keys",
+        "watch-type": "cds watch --open type/webapp/index.html#fe-lrop-v4",
+        "watch-material": "cds watch --open material/webapp/index.html#fe-lrop-v4"
     },
     "eslintConfig": {
         "extends": "eslint:recommended",
@@ -87,6 +89,8 @@
         }
     },
     "sapux": [
-        "app/plant"
+        "app/plant",
+        "app/type",
+        "app/material"
     ]
 }

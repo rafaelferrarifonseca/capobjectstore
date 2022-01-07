@@ -1,7 +1,7 @@
 {
     "_version": "1.32.0",
     "sap.app": {
-        "id": "capobjectstore.plant",
+        "id": "capobjectstore.material",
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
@@ -26,16 +26,16 @@
         },
         "crossNavigation": {
             "inbounds": {
-                "capobjectstore-plant-inbound": {
+                "capobjectstore-material-inbound": {
                     "signature": {
                         "parameters": {},
                         "additionalParameters": "allowed"
                     },
-                    "semanticObject": "MaterialPlant",
-                    "action": "Manage",
+                    "semanticObject": "material",
+                    "action": "manage",
                     "title": "{{flpTitle}}",
                     "subTitle": "{{flpSubtitle}}",
-                    "icon": "sap-icon://BusinessSuiteInAppSymbols/icon-warehouse"
+                    "icon": "sap-icon://BusinessSuiteInAppSymbols/icon-material"
                 }
             }
         }
@@ -96,42 +96,65 @@
             "routes": [
                 {
                     "pattern": ":?query:",
-                    "name": "MaterialPlantList",
-                    "target": "MaterialPlantList"
+                    "name": "MaterialList",
+                    "target": "MaterialList"
                 },
                 {
-                    "pattern": "MaterialPlant({key}):?query:",
-                    "name": "MaterialPlantObjectPage",
-                    "target": "MaterialPlantObjectPage"
+                    "pattern": "Material({key}):?query:",
+                    "name": "MaterialObjectPage",
+                    "target": "MaterialObjectPage"
+                },
+                {
+                    "pattern": "Material({key})/stock({key2}):?query:",
+                    "name": "MaterialStockObjectPage",
+                    "target": "MaterialStockObjectPage"
                 }
             ],
             "targets": {
-                "MaterialPlantList": {
+                "MaterialList": {
                     "type": "Component",
-                    "id": "MaterialPlantList",
+                    "id": "MaterialList",
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
-                            "entitySet": "MaterialPlant",
+                            "entitySet": "Material",
                             "variantManagement": "Page",
                             "navigation": {
-                                "MaterialPlant": {
+                                "Material": {
                                     "detail": {
-                                        "route": "MaterialPlantObjectPage"
+                                        "route": "MaterialObjectPage"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "MaterialPlantObjectPage": {
+                "MaterialObjectPage": {
                     "type": "Component",
-                    "id": "MaterialPlantObjectPage",
+                    "id": "MaterialObjectPage",
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
                             "editableHeaderContent": false,
-                            "entitySet": "MaterialPlant"
+                            "entitySet": "Material",
+                            "navigation": {
+                                "stock": {
+                                    "detail": {
+                                        "route": "MaterialStockObjectPage"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "MaterialStockObjectPage": {
+                    "type": "Component",
+                    "id": "MaterialStockObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "entitySet": "MaterialStock"
                         }
                     }
                 }
