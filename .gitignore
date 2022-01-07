@@ -110,3 +110,9 @@ gen/
 
 mta_archives/
 
+app/plant/dist
+
+app/type/dist
+
+app/material/dist
+
