@@ -1,0 +1,27 @@
+{
+  "welcomeFile": "/index.html",
+  "authenticationMethod": "route",
+  "logout": {
+    "logoutEndpoint": "/do/logout"
+  },
+  "routes": [
+    {
+        "csrfProtection": false,
+        "source": "^/v2/catalog/",
+        "destination": "capobjectstore",
+        "authenticationType": "xsuaa"
+    },
+    {
+        "csrfProtection": false,
+        "source": "^/catalog/",
+        "destination": "capobjectstore",
+        "authenticationType": "xsuaa"
+    },
+    {
+      "source": "^(.*)$",
+      "target": "$1",
+      "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa"
+    }
+  ]
+}

@@ -23,5 +23,35 @@ service CatalogService { // @( requires:'authenticated-user') {
     entity MaterialStockCRUD  as projection on capobjectstore.MaterialStock {
         *, plant: redirected to MaterialPlantCRUD
     }
+   
+   //Serviços para objectstore
+    action postPDF(blobPDF :  LargeBinary, ID: UUID);
+    
+    function getPDF(ID: UUID) returns LargeString;
+
+
+    //Serviço para carga de excel
+    //UPLOAD Stock
+    type logsStock {
+                log: {
+                   MaterialCode: String;
+                   plant: String;
+                   message: String;
+                };
+                error: Boolean;
+                errorMessage: String;      
+        }
+    type downloadsTemplates {
+                stock: {
+                    material: String;
+                    plant: String;
+                    stock: Integer;
+                    unit: String;
+                };
+        }
+
+    action uploadStock(File: LargeString ) returns array of logsStock;
   
+    //Download dos templates de carga
+    action downloadTemplate(Name: String) returns array of downloadsTemplates;
 }
