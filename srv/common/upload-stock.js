@@ -1,14 +1,14 @@
 const { insertIntoCompanies, 
         getCompaniesForCNPJ, 
+        stockCompany,
         getEmptyCCMPrefec, 
-        updateCompany, 
         insertIntoCompaniesPrefectures 
       }              = require("./db/db-upload-stock");
 const { getBundle }  = require('./i18n');
 const xlsx           = require('xlsx');
 
 
-async function handleUploadCompanies(req, service) {
+async function handleUploadStock(req, service) {
     const tx = service.tx();
 
     try {
@@ -37,8 +37,8 @@ async function handleUploadCompanies(req, service) {
             if(loadFileHeader[headerName[i]] != headerExpected[i]){
                 return {
                     log: {
-                        CNPJ: null,
-                        name: null,
+                        material: null,
+                        plant: null,
                         message: "",
                     },
                     error: true,
@@ -48,22 +48,18 @@ async function handleUploadCompanies(req, service) {
         }
 
         //Converte o Objeto em um array de CNPJs
-        let newCompanies  = [],
-            logsCompanies = [];
+        let newStock  = [],
+            logsStock = [];
 
         for (let i = 0; i < loadFile.length; i++) {
             newCompanies[i] = {
-                CNPJ: loadFile[i].A,
-                name: loadFile[i].B,
-                CCM: loadFile[i].C,
-                certificate: loadFile[i].D,
-                description: loadFile[i].E,
-                city: loadFile[i].F,
-                state: loadFile[i].G,
-                homeprefecture_id: null
+                material: loadFile[i].A,
+                plant: loadFile[i].B,
+                stock: loadFile[i].C,
+                unit: loadFile[i].D,
             }
         }
-
+/* inserir código para validar campos e buscar dados validando 
         //Pega todas prefeituras com CCM false
         let aPrefectures = await getEmptyCCMPrefec(service);
 
@@ -175,11 +171,11 @@ async function handleUploadCompanies(req, service) {
 
             
         }
-
+*/
         return logsCompanies;
     } catch (e) {
         throw (e)
     }
 }
 
-module.exports.handleUploadCompanies = handleUploadCompanies;
+module.exports.handleUploadStock = handleUploadStock;

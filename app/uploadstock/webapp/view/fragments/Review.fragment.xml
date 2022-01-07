@@ -4,36 +4,6 @@
 			<form:SimpleForm title="1. {i18n>ReviewSelectedInformation}" minWidth="1024" id="form-content" editable="false" layout="ResponsiveGridLayout">
 				<form:content>
 					<Label text="{i18n>mainLabelTypeText}" required="true" />
-        			<RadioButtonGroup columns="4" width="100%">
-						<RadioButton 
-							text="{i18n>mainCheckTextCompany}" 
-							selected="{fieldControl>/selectionCheckCompany}"
-							select="onWizardStepValidation"
-							valueState="{fieldControl>/State/selectionCheckCompany/ValueState}"
-							enabled="{fieldControl>/State/selectionCheckCompany/Enabled}"
-						/>
-						<RadioButton 
-							text="{i18n>mainCheckTextSchedule}"
-							selected="{fieldControl>/selectionCheckSchedule}"
-							select="onWizardStepValidation"
-							valueState="{fieldControl>/State/selectionCheckSchedule/ValueState}"
-							enabled="{fieldControl>/State/selectionCheckSchedule/Enabled}" 
-						/>
-						<RadioButton 
-							text="{i18n>mainCheckTextException}"
-							selected="{fieldControl>/selectionCheckException}"
-							select="onWizardStepValidation"
-							valueState="{fieldControl>/State/selectionCheckException/ValueState}"
-							enabled="{fieldControl>/State/selectionCheckException/Enabled}" 
-						/>
-						<RadioButton
-							text="{i18n>mainCheckTextVendor}"
-							selected="{fieldControl>/selectionCheckVendor}"
-							valueState="{fieldControl>/State/selectionCheckVendor/ValueState}"
-							enabled="{fieldControl>/State/selectionCheckVendor/Enabled}" 
-						/>
-					</RadioButtonGroup>          
-					<Label text="{i18n>mainLabelFile}" required="true"/>
 					<u:FileUploader 
 						width="100%"
 						tooltip="{i18n>mainTooltipFile}" 

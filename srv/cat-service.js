@@ -2,8 +2,8 @@ const cds = require('@sap/cds');
 const xsenv = require("@sap/xsenv");
 const { getBundle } = require('./common/i18n');
 
-const { handleUploadStock } = require('./commom/upload-stock');
-const { handleDownloadTemplate } = require('./commom/download-template');
+const { handleUploadStock } = require('./common/upload-stock');
+const { handleDownloadTemplate } = require('./common/download-template');
 
 const AWS = require('aws-sdk')
 
@@ -61,7 +61,7 @@ class CatalogService extends cds.ApplicationService {
 
         this.on('uploadStock', async (req, res) => {
             try {
-                const service = cds.services.uploadstock;
+                const service = cds.services.CatalogService;
                 return await handleUploadStock(req, service);
             } catch (e) {
                 console.error('ERRO: ' + e)

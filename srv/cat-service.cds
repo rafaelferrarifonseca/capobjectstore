@@ -25,9 +25,9 @@ service CatalogService { // @( requires:'authenticated-user') {
     }
    
    //Serviços para objectstore
-    action postPDF(blobPDF :  LargeBinary, ID: UUID);
+    action setBlob(blobPDF :  LargeBinary, ID: UUID);
     
-    function getPDF(ID: UUID) returns LargeString;
+    function getBlob(ID: UUID) returns LargeString;
 
 
     //Serviço para carga de excel

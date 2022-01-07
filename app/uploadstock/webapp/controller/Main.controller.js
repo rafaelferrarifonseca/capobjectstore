@@ -29,7 +29,7 @@ sap.ui.define([
 
 		onWizardStepValidation: function(oEvent) {
 			let	aFieldsControl = this.getModel("fieldControl").getData(),
-				aFields 	   = ["selectionFile", "selectionCheckCompany", "selectionCheckSchedule", "selectionCheckException", "selectionCheckVendor"],
+				aFields 	   = ["selectionFile"],
 				bValid         = true;
 
 			if (this._wizard) {		
@@ -58,15 +58,9 @@ sap.ui.define([
 		onWizardCompletedHandler: function() {
 			let aFieldsControl = this.getModel("fieldControl").getData();
 			
-			if(aFieldsControl.selectionCheckCompany){
-				this._uploadCompanies(aFieldsControl);
-			}else if(aFieldsControl.selectionCheckSchedule){
-				this._uploadSchedules(aFieldsControl);
-			}else if(aFieldsControl.selectionCheckException){
-				this._uploadExeceptions(aFieldsControl);
-			}else if(aFieldsControl.selectionCheckVendor){
-				this._uploadVendor(aFieldsControl);
-			}
+			
+			this._uploadStock(aFieldsControl);
+			
 		},
 
 		onHandleTypeMissmatch: function (oEvent) {
@@ -98,39 +92,15 @@ sap.ui.define([
 		onDownloadTemplate: function() {
 			let aFieldsControl = this.getModel("fieldControl").getData();
 
-			if(aFieldsControl.selectionCheckCompany){
+			
 				//_downloadTemplate(oName, sColumns, oNameData, i18nText)
 				this._downloadTemplate(
-					"companies",
-					this.getModel("columnsExcel").getData().columnsCompanies,
-					"companies",
-					this.getResourceBundle().getText("mainCheckTextCompany")
+					"stock",
+					this.getModel("columnsExcel").getData().columnsStock,
+					"stock",
+					this.getResourceBundle().getText("mainCheckTextStock")
 				);
-			}else if(aFieldsControl.selectionCheckSchedule){
-				//_downloadTemplate(oName, sColumns, oNameData, i18nText)
-				this._downloadTemplate(
-					"scheduleLog",
-					this.getModel("columnsExcel").getData().columnsSchedule,
-					"schedule",
-					this.getResourceBundle().getText("mainCheckTextSchedule")
-				);
-			}else if(aFieldsControl.selectionCheckException){
-				//_downloadTemplate(oName, sColumns, oNameData, i18nText)
-				this._downloadTemplate(
-					"readexception",
-					this.getModel("columnsExcel").getData().columnsException,
-					"exception",
-					this.getResourceBundle().getText("mainCheckTextException")
-				);
-			}else if(aFieldsControl.selectionCheckVendor){
-				//_downloadTemplate(oName, sColumns, oNameData, i18nText)
-				this._downloadTemplate(
-					"nfsevendor", 
-					this.getModel("columnsExcel").getData().columnsVendor,
-					"vendor",
-					this.getResourceBundle().getText("mainCheckTextVendor")
-				);
-			}
+			
 		},
 		/* =========================================================== */
 		/* internal methods                                            */
@@ -142,22 +112,10 @@ sap.ui.define([
 
 			let i18n = {
 				//company
-				download_CNPJ: this.getResourceBundle().getText('download_CNPJ'),
-				download_name: this.getResourceBundle().getText('download_name'),
-				download_CCM: this.getResourceBundle().getText('download_CCM'),
-				download_certificate: this.getResourceBundle().getText('download_certificate'),
-				download_description: this.getResourceBundle().getText('download_description'),
-				download_cityName: this.getResourceBundle().getText('download_cityName'),
-				download_UF: this.getResourceBundle().getText('download_UF'),
-				//schedule
-				download_schedule_CNPJ: this.getResourceBundle().getText('download_schedule_CNPJ'),
-				download_readDate: this.getResourceBundle().getText('download_readDate'),
-				//exception
-				download_vendor: this.getResourceBundle().getText('download_vendor'),
-				download_vendorName: this.getResourceBundle().getText('download_vendorName'),
-				download_validFrom: this.getResourceBundle().getText('download_validFrom'),
-				download_validTo : this.getResourceBundle().getText('download_validTo'),
-				download_registration: this.getResourceBundle().getText('download_registration'),
+				download_material: this.getResourceBundle().getText('download_material'),
+				download_plant: this.getResourceBundle().getText('download_plant'),
+				download_stock: this.getResourceBundle().getText('download_stock'),
+				download_unit: this.getResourceBundle().getText('download_unit')		
 			}
 
 			this.getModel("fieldControl").setData(Entity.initSelectionModel());
@@ -191,10 +149,10 @@ sap.ui.define([
 			reader.readAsDataURL(file);
 		},
 
-		_uploadCompanies: function(aFieldsControl) {
+		_uploadStock: function(aFieldsControl) {
 			this.setAppBusy(true);
 
-			this.getModel().callFunction("/uploadCompanies",{
+			this.getModel().callFunction("/uploadStock",{
 				method: "POST", 
 				urlParameters: { File: oFileBase64 },
 				success: function(oData){
@@ -205,9 +163,7 @@ sap.ui.define([
 						this._wizard.discardProgress(this.byId("selectFile"));
 						this._wizard.invalidateStep(this.byId("selectFile"));
 					}else {
-						let aFields = ["selectionFile", "selectionCheckCompany", 
-									   "selectionCheckSchedule", "selectionCheckException", 
-									   "selectionCheckVendor"];
+						let aFields = ["selectionFile"];
 
 						aFields.forEach(function(sField) {
 							aFieldsControl.State[sField].Enabled = false;
@@ -216,7 +172,7 @@ sap.ui.define([
 
 						this.getModel("logsFile").setData({
 							logs: oData.results,
-							file: "companies"
+							file: "stock"
 						});
 						this.getModel("logsFile").refresh(true);
 
@@ -234,136 +190,7 @@ sap.ui.define([
 			});
 		},
 
-		_uploadSchedules: function(aFieldsControl) {
-			this.setAppBusy(true);
-
-			this.getModel().callFunction("/uploadScheduleLog",{
-				method: "POST", 
-				urlParameters: { File: oFileBase64 },
-				success: function(oData){
-					this.setAppBusy(false);
-
-					if(oData.results[0].error){
-						MessageBox.error(oData.results[0].errorMessage);
-						this._wizard.discardProgress(this.byId("selectFile"));
-						this._wizard.invalidateStep(this.byId("selectFile"));
-					}else {
-						let aFields = ["selectionFile", "selectionCheckCompany", 
-								       "selectionCheckSchedule", "selectionCheckException", 
-									   "selectionCheckVendor"];
-
-						aFields.forEach(function(sField) {
-							aFieldsControl.State[sField].Enabled = false;
-						});
-						this.getModel("fieldControl").refresh();
-
-						this.getModel("logsFile").setData({
-							logs: oData.results,
-							file: "schedule",
-							simulation: true
-						});
-						this.getModel("logsFile").refresh(true);
-
-						this._oNavContainer.to(this._oWizardReviewPage);
-					}
-				}.bind(this),
-				error: function(error){
-					this.setAppBusy(false);
-					
-					MessageBox.error(this.getResourceBundle().getText("errorLoadFile"));
-
-					this._wizard.discardProgress(this.byId("selectFile"));
-					this._wizard.validateStep(this.byId("selectFile"));
-				}.bind(this)
-			});
-		},
-
-		_uploadExeceptions: function(aFieldsControl) {
-			this.setAppBusy(true);
-
-			this.getModel().callFunction("/uploadReadException",{
-				method: "POST", 
-				urlParameters: { File: oFileBase64 },
-				success: function(oData){
-					this.setAppBusy(false);
-
-					if(oData.results[0].error){
-						MessageBox.error(oData.results[0].errorMessage);
-						this._wizard.discardProgress(this.byId("selectFile"));
-						this._wizard.invalidateStep(this.byId("selectFile"));
-					}else {
-						let aFields = ["selectionFile", "selectionCheckCompany", 
-									   "selectionCheckSchedule", "selectionCheckException", 
-									   "selectionCheckVendor"];
-
-						aFields.forEach(function(sField) {
-							aFieldsControl.State[sField].Enabled = false;
-						});
-						this.getModel("fieldControl").refresh();
-						
-						this.getModel("logsFile").setData({
-							logs: oData.results,
-							file: "exeception"
-						});
-						this.getModel("logsFile").refresh(true);
-
-						this._oNavContainer.to(this._oWizardReviewPage);
-					}
-				}.bind(this),
-				error: function(error){
-					this.setAppBusy(false);
-
-					MessageBox.error(this.getResourceBundle().getText("errorLoadFile"));
-
-					this._wizard.discardProgress(this.byId("selectFile"));
-					this._wizard.validateStep(this.byId("selectFile"));
-				}.bind(this)
-			});
-		},
-
-		_uploadVendor: function(aFieldsControl) {
-			this.setAppBusy(true);
-
-			this.getModel().callFunction("/uploadVendor",{
-				method: "POST", 
-				urlParameters: { File: oFileBase64 },
-				success: function(oData){
-					this.setAppBusy(false);
-
-					if(oData.results[0].error){
-						MessageBox.error(oData.results[0].errorMessage);
-						this._wizard.discardProgress(this.byId("selectFile"));
-						this._wizard.invalidateStep(this.byId("selectFile"));
-					}else {
-						let aFields = ["selectionFile", "selectionCheckCompany", 
-									   "selectionCheckSchedule", "selectionCheckException", 
-									   "selectionCheckVendor"];
-
-						aFields.forEach(function(sField) {
-							aFieldsControl.State[sField].Enabled = false;
-						});
-						this.getModel("fieldControl").refresh();
-						
-						this.getModel("logsFile").setData({
-							logs: oData.results,
-							file: "vendor"
-						});
-						this.getModel("logsFile").refresh(true);
-
-						this._oNavContainer.to(this._oWizardReviewPage);
-					}
-				}.bind(this),
-				error: function(error){
-					this.setAppBusy(false);
-
-					MessageBox.error(this.getResourceBundle().getText("errorLoadFile"));
-
-					this._wizard.discardProgress(this.byId("selectFile"));
-					this._wizard.validateStep(this.byId("selectFile"));
-				}.bind(this)
-			});
-		},
-
+	
 		_backToWizardContent: function () {
 			this._oNavContainer.backToPage(this._oWizardContentPage.getId());
 		},
