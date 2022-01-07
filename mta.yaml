@@ -111,6 +111,10 @@ modules:
       - capobjectstorematerial.zip
       name: capobjectstorematerial
       target-path: resources/
+    - artifacts:
+      - capobjectstoreuploadstock.zip
+      name: capobjectstoreuploadstock
+      target-path: resources/      
 
 # --------------------- HTML5 MODULE --------------------------
 - name: capobjectstoreplant
@@ -147,6 +151,17 @@ modules:
     - npm run build:cf
     supported-platforms: []
 
+# --------------------- HTML5 MODULE -------------------------
+- name: capobjectstoreuploadstock
+# ------------------------------------------------------------
+  type: html5
+  path: app/uploadstock
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm run build:cf
+    supported-platforms: []
 
 # ----------------------------------------------------------------
 # ----------------------------------------------------------------
